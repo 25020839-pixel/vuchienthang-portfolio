@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Vũ Chiến Thắng</title>
+    <style>
+        /* Tông màu sáng dịu, có hiệu ứng đổi ảnh nền mượt mà */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Cấu hình ảnh nền mặc định lúc mới tải trang */
+            background-image: url('bg-gioithieu.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        /* Khung hiển thị chính giống màn hình game */
+        .game-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 950px;
+            min-height: 620px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid #fff;
+        }
+
+        /* Tiêu đề góc trên tích hợp ảnh đại diện */
+        .header {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.6);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #2c3e50;
+            letter-spacing: 1px;
+        }
+
+       
+
+        /* Khu vực nội dung và menu */
+        .main-content {
+            display: flex;
+            flex: 1;
+            padding: 30px;
+            gap: 40px;
+        }
+
+        /* Cột Menu (Các nút Option Game) */
+        .menu-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
+            border-right: 2px dashed #cbd5e1;
+            padding-right: 30px;
+        }
+
+        /* Style nút bấm mang phong cách Game Options */
+        .option-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #475569;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .option-btn::before {
+            content: '▶';
+            position: absolute;
+            left: -20px;
+            opacity: 0;
+            color: #3b82f6;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            transform: translateX(10px);
+            border-color: #3b82f6;
+            color: #1e3a8a;
+            background: #eff6ff;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.15);
+        }
+
+        .option-btn:hover::before {
+            opacity: 1;
+            left: -15px;
+        }
+
+        .option-btn.active {
+            background: #dbeafe;
+            border-color: #2563eb;
+            color: #1d4ed8;
+        }
+
+        /* Cột hiển thị nội dung */
+        .content-column {
+            flex: 2;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { color: #1e40af; border-bottom: 2px solid #bfdbfe; padding-bottom: 5px; }
+        h3 { color: #0369a1; margin-top: 25px;}
+        p, li { line-height: 1.6; color: #475569; }
+        ul { padding-left: 20px; }
+
+        /* Các nút bài tập trong phần Dự án */
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .project-btn {
+            display: block;
+            text-decoration: none;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid #3b82f6;
+            padding: 15px;
+            border-radius: 6px;
+            color: #334155;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .project-btn:hover {
+            background: #f8fafc;
+            border-left-color: #2563eb;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .project-btn span {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-loader">
+    <div class="loader-content">
+        <div class="pg-bar-bg">
+            <div id="welcome-bar-fill"></div>
+        </div>
+        <div id="welcome-text">download 0%</div>
+    </div>
+</div>
+
+<style>
+    /* Khung phủ toàn màn hình khi vừa mở trang */
+    #welcome-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #e0f7fa; /* Nền sáng dịu ban đầu đồng bộ với web */
+        z-index: 999999; /* Đảm bảo luôn nằm trên cùng */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    /* Tự động chuyển nền tối nếu toàn trang đang bật Dark Mode */
+    body.dark-mode #welcome-loader {
+        background: #0a0f19;
+    }
+
+    .loader-content {
+        width: 80%;
+        max-width: 450px;
+        text-align: center;
+    }
+
+    /* Thanh nền */
+    .loader-content .pg-bar-bg {
+        width: 100%;
+        background: #ffffff;
+        height: 16px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #cbd5e1;
+    }
+
+    /* Thanh phần trăm chạy */
+    #welcome-bar-fill {
+        width: 0%;
+        background: linear-gradient(90deg, #3b82f6, #2563eb);
+        height: 100%;
+        transition: width 0.05s ease-out;
+    }
+
+    /* Dòng chữ download dưới thanh chạy */
+    #welcome-text {
+        margin-top: 15px;
+        font-weight: bold;
+        font-family: 'Courier New', Courier, monospace;
+        color: #2563eb;
+        font-size: 16px;
+        letter-spacing: 3px;
+        text-transform: lowercase; /* Chữ thường theo đúng ý bạn */
+    }
+
+    /* Màu vàng công nghệ cho thanh loading nếu ở chế độ tối */
+    body.dark-mode .loader-content .pg-bar-bg {
+        background: #1e293b;
+        border-color: #facc15;
+    }
+    body.dark-mode #welcome-bar-fill {
+        background: #facc15;
+        box-shadow: 0 0 10px #facc15;
+    }
+    body.dark-mode #welcome-text {
+        color: #facc15;
+    }
+</style>
+
+<script>
+    // Chạy hiệu ứng đếm số ngay khi tải trang
+    window.addEventListener('DOMContentLoaded', function() {
+        const barFill = document.getElementById('welcome-bar-fill');
+        const loadText = document.getElementById('welcome-text');
+        const loader = document.getElementById('welcome-loader');
+        
+        let progress = 0;
+        
+        // Tự động quét kiểm tra xem hệ thống có đang lưu trạng thái Dark mode không để đổi màu thanh load cho khớp
+        if (document.body.classList.contains('dark-mode')) {
+            loader.style.background = "#0a0f19";
+        }
+
+        const welcomeInterval = setInterval(function() {
+            // Tăng ngẫu nhiên phần trăm để tạo cảm giác load thực tế
+            progress += Math.floor(Math.random() * 8) + 4;
+            if (progress > 100) progress = 100;
+
+            if (barFill) barFill.style.width = progress + '%';
+            if (loadText) loadText.innerText = 'download ' + progress + '%';
+
+            // Khi đạt 100%, ẩn màn hình chờ và hiện Portfolio ra
+            if (progress >= 100) {
+                clearInterval(welcomeInterval);
+                setTimeout(function() {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                }, 400); // Giữ lại 0.4 giây ở mốc 100% cho đẹp mắt
+            }
+        }, 50); // Tốc độ chạy (cứ 50ms tăng một lần, mất khoảng 1-2 giây để hoàn thành)
+    });
+</script>
+    <div class="main-content">
+        <div class="menu-column">
+            <button class="option-btn active" onclick="showSection('gioi-thieu', this, 'bg-gioithieu.jpg')">1. Giới thiệu bản thân</button>
+            <button id="btn-du-an" class="option-btn" onclick="showSection('du-an', this, 'bg-duan.jpg')">2. Danh mục Dự án</button>
+            <button class="option-btn" onclick="showSection('tong-ket', this, 'bg-tongket.jpg')">3. Tổng kết & Đánh giá</button>
+        </div>
+
+        <div class="content-column">
+            
+            <div id="gioi-thieu" class="section active">
+                <h2>I. Thông tin cá nhân</h2>
+                <p><strong>Họ và tên:</strong> Vũ Chiến Thắng</p>
+                <p><strong>Mã sinh viên:</strong> 25020839</p>
+                <p><strong>Ngành học / Trường:</strong> Kỹ thuật máy tính - Đại học Công nghệ (UET)</p>
+                <p><strong>Sở thích:</strong> Xem phim, nghe nhạc, khám phá và tìm hiểu các kiến thức khoa học.</p>
+
+                <h3>II. Mục tiêu học tập & Phát triển</h3>
+                <ul>
+                    <li>Mục tiêu ngắn hạn: Nắm vững các kiến thức nền tảng trong môi trường số, hoàn thành tốt các môn cơ sở ngành và phấn đấu đạt GPA mục tiêu là 3.2.</li>
+                    <li>Định hướng lâu dài: Trau dồi thêm về thuật toán và hệ thống, hướng tới việc trở thành một Kỹ sư phần mềm vững chuyên môn.</li>
+                </ul>
+
+                <h3>III. Mục tiêu của Portfolio</h3>
+                <ul>
+                    <li><strong>Lưu trữ & Hệ thống hóa:</strong> Tổng hợp lại toàn bộ các sản phẩm từ bài 1 đến bài 6 của môn "Nhập môn Công nghệ số và Ứng dụng Trí tuệ nhân tạo" vào một không gian duy nhất.</li>
+                    <li><strong>Thể hiện kỹ năng:</strong> Minh chứng cho khả năng ứng dụng các công cụ số, AI tạo sinh và kỹ năng hợp tác trực tuyến vào học tập.</li>
+                </ul>
+            </div>
+
+            <div id="du-an" class="section">
+    <h2>Danh sách Bài tập Thành phần</h2>
+    <p>Dưới đây là các dự án/bài tập đã hoàn thiện. (Click vào từng mục để xem trực tiếp tại đây)</p>
+    
+    <div class="project-grid">
+        <a href="javascript:void(0)" onclick="viewProject('Bài 1: Máy tính và các thiết bị ngoại vi', 'https://docs.google.com/document/d/1Lm1D98-2G9fiRT0spEDuQlDvQJxUoE90/preview')" class="project-btn">
+            Bài 1: Máy tính và các thiết bị ngoại vi
+            <span>Thao tác cơ bản với tệp tin và cấu trúc thư mục.</span>
+        </a>
+        <a href="javascript:void(0)" onclick="viewProject('Bài 2: Khai thác dữ liệu và thông tin', 'https://docs.google.com/document/d/1nJ4eGBnQA5KpZNbOZIwno1lV78RDMHQm/preview')" class="project-btn">
+            Bài 2: Khai thác dữ liệu và thông tin
+            <span>Tìm kiếm, đánh giá thông tin học thuật bằng toán tử nâng cao.</span>
+        </a>
+        <a href="javascript:void(0)" onclick="viewProject('Bài 3: Tổng quan về trí tuệ nhân tạo', 'https://docs.google.com/document/d/1UuDyKfM5YVA9c7nqPuiN7CZJbuja5B7_/preview')" class="project-btn">
+            Bài 3: Tổng quan về trí tuệ nhân tạo
+            <span>Viết và cải tiến Prompt cho các tác vụ học tập.</span>
+        </a>
+        <a href="javascript:void(0)" onclick="viewProject('Bài 4: Giao tiếp và hợp tác trong môi trường số', 'https://docs.google.com/document/d/131lF7IqhaLMsdOCAJCF8Dr74cl31LaS2/preview')" class="project-btn">
+            Bài 4: Giao tiếp và hợp tác trong môi trường số
+            <span>Sử dụng công cụ quản lý dự án nhóm trực tuyến.</span>
+        </a>
+        <a href="javascript:void(0)" onclick="viewProject('Bài 5: Sáng tạo nội dung số', 'https://docs.google.com/document/d/1d6schV8vf4IklgtWKMIHpTZrxiS32HegqdKN8lyTzM4/preview')" class="project-btn">
+            Bài 5: Sáng tạo nội dung số
+            <span>Sử dụng AI tạo sinh để hỗ trợ sáng tạo nội dung (bài viết/hình ảnh).</span>
+        </a>
+        <a href="javascript:void(0)" onclick="viewProject('Bài 6: An toàn và liêm chính học thuật', 'https://docs.google.com/document/d/18aHz9TWyoWYQr-0dHIjDRpIwmcxWPU0K/preview')" class="project-btn">
+            Bài 6: An toàn và liêm chính học thuật
+            <span>Bộ nguyên tắc cá nhân về sử dụng AI có trách nhiệm.</span>
+        </a>
+    </div>
+</div>
+
+<div id="chi-tiet-duan" class="section">
+    <button class="option-btn" style="padding: 8px 15px; margin-bottom: 20px; font-size: 14px;" onclick="showSection('du-an')">
+        ← Quay lại danh sách
+    </button>
+    <h2 id="project-title">Tên bài tập</h2>
+    <iframe id="project-iframe" src="" width="100%" height="520px" style="border: 2px solid #cbd5e1; border-radius: 8px; background: white; margin-top: 15px; display: none;"></iframe>
+</div>
+
+            <div id="chi-tiet-duan" class="section">
+                <button class="option-btn" style="padding: 8px 15px; margin-bottom: 20px; font-size: 14px;" onclick="showSection('du-an', document.getElementById('btn-du-an'))">
+                    ← Quay lại danh sách
+                </button>
+                <h2 id="project-title">Tên bài tập</h2>
+                <iframe id="project-iframe" src="" width="100%" height="520px" style="border: 2px solid #cbd5e1; border-radius: 8px; background: white; margin-top: 15px;"></iframe>
+            </div>
+
+            <div id="tong-ket" class="section">
+                <h2>Tổng kết Dự án Portfolio</h2>
+                
+                <h3>1. Trải nghiệm & Cảm nhận</h3>
+                <p>Quá trình xây dựng Portfolio không chỉ là một bài tập thu hoạch mà còn là cơ hội để mình nhìn lại toàn bộ chặng đường học tập vừa qua. Việc xâu chuỗi các bài tập nhỏ thành một sản phẩm hoàn chỉnh giúp mình thấy rõ sự tiến bộ của bản thân trong việc làm chủ các công cụ số.</p>
+
+                <h3>2. Kiến thức & Kỹ năng cốt lõi</h3>
+                <ul>
+                    <li>Biết cách khai thác thông tin học thuật chuẩn xác thay vì chỉ tìm kiếm Google thông thường.</li>
+                    <li>Nắm được tư duy "Prompt Engineering" cơ bản để giao tiếp hiệu quả với AI.</li>
+                    <li>Kỹ năng tổ chức không gian làm việc số và làm việc nhóm trực tuyến một cách có hệ thống.</li>
+                </ul>
+
+                <h3>3. Điểm tâm đắc & Thách thức</h3>
+                <p><strong>Tâm đắc:</strong> Rất ấn tượng với phần ứng dụng AI tạo sinh (Bài 3 và Bài 5). Việc thấy AI tối ưu hóa nội dung dựa trên những dòng lệnh mình viết mang lại cảm giác rất thú vị.</p>
+                <p><strong>Thách thức:</strong> Khó khăn lớn nhất nằm ở việc tuân thủ các nguyên tắc về liêm chính học thuật khi sử dụng AI (Bài 6), đòi hỏi mình phải luôn cẩn trọng trong việc trích dẫn và xác thực nguồn thông tin do AI cung cấp.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hàm chuyển đổi mục Menu chính và cập nhật ảnh nền tương ứng
+    function showSection(sectionId, btnElement, bgImage) {
+        // Đổi ảnh nền động cho body nếu được truyền vào
+        if (bgImage) {
+            document.body.style.backgroundImage = "url('" + bgImage + "')";
+        }
+
+        // Ẩn tất cả các section hiện tại
+        var sections = document.querySelectorAll('.section');
+        sections.forEach(function(sec) {
+            sec.classList.remove('active');
+        });
+
+        // Xóa trạng thái active của tất cả các nút bấm menu chính
+        var buttons = document.querySelectorAll('.menu-column .option-btn');
+        buttons.forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+
+        // Kích hoạt hiển thị section được chọn và làm nổi bật nút menu tương ứng
+        document.getElementById(sectionId).classList.add('active');
+        if (btnElement) {
+            btnElement.classList.add('active');
+        }
+    }
+
+    // Hàm chuyển đổi màn hình xem tài liệu nội bộ (Nhúng Iframe)
+    function viewProject(title, previewUrl) {
+        // Cập nhật tiêu đề bài viết và gán link nhúng vào thẻ iframe
+        document.getElementById('project-title').innerText = title;
+        document.getElementById('project-iframe').src = previewUrl;
+        
+        // Ẩn toàn bộ các mục nội dung khác
+        var sections = document.querySelectorAll('.section');
+        sections.forEach(function(sec) {
+            sec.classList.remove('active');
+        });
+        
+        // Chỉ hiển thị duy nhất màn hình trình chiếu tài liệu dự án
+        document.getElementById('chi-tiet-duan').classList.add('active');
+    }
+
+</script>
+<div class="game-controls">
+    <button class="control-btn" id="sound-toggle" onclick="toggleSound()" title="Bật/Tắt âm thanh">🔊 Âm thanh</button>
+    <button class="control-btn" id="theme-toggle" onclick="toggleTheme()" title="Chuyển chế độ Sáng/Tối"><span id="theme-icon">☀️</span> Chế độ</button>
+</div>
+
+<style>
+    /* Style cho cụm nút điều khiển góc màn hình */
+    .game-controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 9999;
+    }
+    .control-btn {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(5px);
+        border: 2px solid #94a3b8;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-weight: bold;
+        color: #475569;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+        font-size: 13px;
+    }
+    .control-btn:hover {
+        transform: translateY(-2px);
+        border-color: #3b82f6;
+        color: #1d4ed8;
+        background: #eff6ff;
+    }
+/* ========================================== */
+    /* CẤU HÌNH GIAO DIỆN TỐI - CHỮ VÀNG RETRO GAME (SIÊU RÕ) */
+    /* ========================================== */
+    body.dark-mode {
+        background-image: url('Denia6.jpg') !important;
+        color: #facc15; /* Đổi màu chữ mặc định sang màu vàng */
+    }
+
+    body.dark-mode .game-container {
+        background: rgba(10, 15, 25, 0.95) !important; /* Nền siêu tối 95% để chữ vàng nổi bần bật */
+        border: 2px solid #facc15 !important; /* Viền hộp màu vàng đồng bộ */
+        box-shadow: 0 0 30px rgba(250, 204, 21, 0.25);
+    }
+
+    /* 🌟 ÉP TẤT CẢ CHỮ TRONG CỘT NỘI DUNG SANG MÀU VÀNG CÔNG NGHỆ */
+    body.dark-mode .content-column * {
+        color: #facc15 !important; 
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9) !important; /* Đổ bóng đen để chữ sắc nét */
+    }
+
+    /* TIÊU ĐỀ H2: ĐỔI SANG TRẮNG TINH ĐỂ NỔI BẬT TRÊN NỀN CHỮ VÀNG */
+    body.dark-mode h2, body.dark-mode h2 * {
+        color: #ffffff !important; 
+        border-bottom-color: #facc15 !important; /* Đường gạch chân màu vàng */
+    }
+    
+    /* TIÊU ĐỀ H3: MÀU VÀNG CHANH NHẠT */
+    body.dark-mode h3, body.dark-mode h3 * {
+        color: #fef08a !important; 
+    }
+    
+    /* CÁC CHỮ IN ĐẬM (STRONG): HÓA TRẮNG TINH ĐỂ TẠO ĐIỂM NHẤN ĐỌC */
+    body.dark-mode strong {
+        color: #ffffff !important; 
+    }
+
+    /* Các nút chọn Menu bên trái ở chế độ tối */
+    body.dark-mode .option-btn {
+        background: rgba(20, 30, 45, 0.9) !important;
+        border-color: #475569 !important;
+        color: #94a3b8 !important;
+    }
+    body.dark-mode .option-btn:hover {
+        background: #1e293b !important;
+        border-color: #facc15 !important;
+        color: #facc15 !important;
+        box-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+    }
+    body.dark-mode .option-btn.active {
+        background: #1e3a8a !important; /* Nền nút active màu xanh để phân biệt */
+        border-color: #facc15 !important;
+        color: #ffffff !important;
+    }
+
+    /* Các hộp nút bấm bài tập */
+    body.dark-mode .project-btn {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+    }
+    body.dark-mode .project-btn * {
+        color: #facc15 !important;
+    }
+    body.dark-mode .project-btn:hover {
+        background: #0f172a !important;
+        border-color: #facc15 !important;
+        box-shadow: 0 4px 15px rgba(250, 204, 21, 0.15);
+    }
+    body.dark-mode .project-btn span, body.dark-mode .project-btn span * {
+        color: #854d0e !important; /* Chữ mô tả nhỏ dưới bài tập chuyển sang màu vàng đất cho dịu mắt */
+        text-shadow: none !important;
+    }
+    
+    /* Nút điều khiển tính năng góc màn hình */
+    body.dark-mode .control-btn {
+        background: rgba(20, 30, 45, 0.85) !important;
+        border-color: #475569 !important;
+        color: #e2e8f0 !important;
+    }</style>
+
+<script>
+    // Khởi tạo các trạng thái hệ thống
+    let isMuted = false;
+    let audioCtx = null;
+
+    // Hàm tạo Audio Context khi có tương tác đầu tiên (Luật bảo mật trình duyệt)
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    // Ý TƯỞNG 3: HÀM PHÁT ÂM THANH GIAO DIỆN (Sử dụng sóng âm tần số)
+    function playSound(type) {
+        if (isMuted) return;
+        initAudio();
+        if (!audioCtx) return;
+
+        let osc = audioCtx.createOscillator();
+        let gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'hover') {
+            // Âm thanh khi lướt qua: Tiếng click cơ khí cực ngắn và thanh thoát
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // Tần số cao
+            gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime); // Âm lượng nhỏ nhẹ
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        } else if (type === 'click') {
+            // Âm thanh khi click chọn: Tiếng phản hồi công nghệ kép (Sci-fi chime)
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.08); // Tần số vút lên
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+    }
+
+    // Hàm điều khiển Bật/Tắt âm thanh toàn trang
+    function toggleSound() {
+        isMuted = !isMuted;
+        const btn = document.getElementById('sound-toggle');
+        if (isMuted) {
+            btn.innerHTML = "🔇 Mute";
+            btn.style.opacity = "0.6";
+        } else {
+            btn.innerHTML = "🔊 Âm thanh";
+            btn.style.opacity = "1";
+            playSound('click'); // Phát thử âm thanh kiểm tra
+        }
+    }
+
+    // Ý TƯỞNG 4: HÀM CHUYỂN ĐỔI CHẾ ĐỘ SÁNG / TỐI NỀN ĐỘNG
+    function toggleTheme() {
+        initAudio();
+        playSound('click'); // Phát âm thanh khi nhấn nút
+        
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        
+        const isDark = body.classList.contains('dark-mode');
+        document.getElementById('theme-icon').innerText = isDark ? "🌙" : "☀️";
+        
+        // Tự động điều chỉnh trạng thái ảnh nền mặc định tương ứng khi chuyển đổi
+        if (!body.style.backgroundImage || body.style.backgroundImage.includes('Denia2.jpg') || body.style.backgroundImage.includes('Denia6.jpg')) {
+            body.style.backgroundImage = isDark ? "url('Denia6.jpg')" : "url('Denia2.jpg')";
+        }
+    }
+
+    // Đính kèm bộ bắt sự kiện âm thanh tự động cho tất cả các nút bấm khi tải trang xong
+    function applySoundListeners() {
+        const gameButtons = document.querySelectorAll('.option-btn, .project-btn, .control-btn');
+        gameButtons.forEach(btn => {
+            // Khi di chuột vào nút
+            btn.addEventListener('mouseenter', () => playSound('hover'));
+            // Khi nhấn chuột vào nút
+            btn.addEventListener('click', () => playSound('click'));
+        });
+    }
+
+    // Kích hoạt hệ thống âm thanh ngay khi cấu trúc trang sẵn sàng
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applySoundListeners);
+    } else {
+        applySoundListeners();
+    }
+</script>
+<style>
+    /* Cấu hình khung chứa thanh Loading phong cách game */
+    #loading-container {
+        margin-top: 60px;
+        margin-bottom: 60px;
+        text-align: center;
+        padding: 20px;
+    }
+    /* Thanh nền phía dưới */
+    .progress-bar-bg {
+        width: 100%;
+        background: #e2e8f0;
+        height: 16px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #cbd5e1;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+    /* Thanh năng lượng chạy phía trên */
+    #progress-bar-fill {
+        width: 0%;
+        background: linear-gradient(90deg, #3b82f6, #2563eb);
+        height: 100%;
+        transition: width 0.08s ease-out;
+    }
+    /* Dòng chữ trạng thái download */
+    #loading-text {
+        margin-top: 15px;
+        font-weight: bold;
+        font-family: 'Courier New', Courier, monospace; /* Kiểu chữ kỹ thuật máy tính */
+        color: #2563eb;
+        font-size: 15px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    /* TỰ ĐỘNG ĐỔI MÀU NEON KHI BẬT CHẾ ĐỘ TỐI (DARK MODE) */
+    body.dark-mode .progress-bar-bg {
+        background: #1e293b;
+        border-color: #3b82f6;
+    }
+    body.dark-mode #progress-bar-fill {
+        background: linear-gradient(90deg, #06b6d4, #3b82f6);
+        box-shadow: 0 0 12px #3b82f6;
+    }
+    body.dark-mode #loading-text {
+        color: #38bdf8;
+        text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    }
+</style>
+
+<script>
+    // Ghi đè hàm viewProject cũ để tích hợp hiệu ứng chạy % download
+    function viewProject(title, previewUrl) {
+        // 1. Cập nhật tiêu đề bài tập
+        document.getElementById('project-title').innerText = title;
+        
+        const iframe = document.getElementById('project-iframe');
+        iframe.style.display = 'none'; // Giấu iframe đi để nhường chỗ cho thanh loading hiển thị
+        iframe.src = previewUrl;
+
+        // 2. Kích hoạt hiển thị màn hình chi tiết dự án
+        var sections = document.querySelectorAll('.section');
+        sections.forEach(function(sec) {
+            sec.classList.remove('active');
+        });
+        document.getElementById('chi-tiet-duan').classList.add('active');
+
+        // 3. Tự động kiểm tra và tạo cấu trúc thanh Loading nếu chưa có sẵn trên trang
+        let loadingBox = document.getElementById('loading-container');
+        if (!loadingBox) {
+            loadingBox = document.createElement('div');
+            loadingBox.id = 'loading-container';
+            loadingBox.innerHTML = `
+                <div class="progress-bar-bg">
+                    <div id="progress-bar-fill"></div>
+                </div>
+                <div id="loading-text">download 0%</div>
+            `;
+            // Chèn thanh loading vào ngay phía trước khung iframe
+            iframe.parentNode.insertBefore(loadingBox, iframe);
+        }
+
+        // 4. Đặt lại trạng thái ban đầu là 0% mỗi lần bấm xem bài mới
+        const barFill = document.getElementById('progress-bar-fill');
+        const loadText = document.getElementById('loading-text');
+        
+        loadingBox.style.display = 'block';
+        barFill.style.width = '0%';
+        loadText.innerText = 'download 0%';
+
+        // 5. Chạy vòng lặp giả lập tăng phần trăm ngẫu nhiên cho mượt và tự nhiên
+        let progress = 0;
+        if (window.projectLoadInterval) clearInterval(window.projectLoadInterval);
+
+        window.projectLoadInterval = setInterval(() => {
+            // Mỗi bước tăng ngẫu nhiên từ 6% đến 15% cho giống tốc độ tải mạng thực tế
+            progress += Math.floor(Math.random() * 10) + 6; 
+            if (progress > 100) progress = 100;
+
+            barFill.style.width = progress + '%';
+            loadText.innerText = 'download ' + progress + '%';
+
+            // Khi tiến trình chạm mốc 100%, xóa bộ đếm, ẩn thanh loading và mở giao diện bài tập lên
+            if (progress >= 100) {
+                clearInterval(window.projectLoadInterval);
+                setTimeout(() => {
+                    loadingBox.style.display = 'none';
+                    iframe.style.display = 'block';
+                }, 350); // Trễ nhẹ một chút để người xem kịp nhìn thấy mốc 100%
+            }
+        }, 70); // Cứ mỗi 70 mili-giây sẽ tăng phần trăm một lần
+    }
+</script>
+<div id="glitch-overlay"></div>
+
+<style>
+    /* Style cho khung phủ glitch */
+    #glitch-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999998; /* Nằm dưới preloader nhưng trên mọi nội dung khác */
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none; /* Không cản trở người dùng click */
+        overflow: hidden;
+        background: transparent;
+    }
+
+    /* Kích hoạt glitch overlay khi class 'active-glitch' được thêm vào body */
+    body.active-glitch #glitch-overlay {
+        opacity: 1;
+        visibility: visible;
+        background: transparent;
+    }
+
+    /* Định nghĩa hiệu ứng nhiễu sóng (glitch) bằng keyframes animation */
+    /* Tạo nhiễu ngang, biến dạng màu sắc và sọc ngang */
+    @keyframes glitch-frames {
+        0% { transform: translate(0); }
+        10% { transform: translate(-8px, -4px); color: #00f0ff; } /* Lệch xanh Cyan */
+        20% { transform: translate(6px, 6px); color: #f00; }     /* Lệch đỏ */
+        30% { transform: translate(-10px, 10px); }
+        40% { transform: translate(8px, -8px); background-image: repeating-linear-gradient(0deg, #fff, #fff 1px, transparent 1px, transparent 3px); } /* Sọc ngang trắng */
+        50% { transform: translate(-6px, 6px); color: #ff0; }     /* Lệch vàng */
+        60% { transform: translate(10px, -10px); }
+        70% { transform: translate(-8px, 8px); color: #00f0ff; } /* Lệch xanh Cyan lại */
+        80% { transform: translate(6px, -6px); }
+        90% { transform: translate(-10px, 10px); }
+        100% { transform: translate(0); background-image: none; color: inherit; }
+    }
+
+    /* Áp dụng hiệu ứng glitch cho tất cả nội dung bên trong game-container khi active-glitch được bật */
+    body.active-glitch .game-container, 
+    body.active-glitch .main-content * {
+        animation: glitch-frames 0.5s step-start; /* step-start để tạo độ giật cơ học y hệt game */
+    }
+
+    /* Hiệu ứng tiếng zap điện công nghệ (sci-fi zap) khi glitch hoạt động (CSS không phát tiếng, script sẽ phát) */
+</style>
+
+<script>
+    // Hàm chuyển đổi chế độ có tích hợp hiệu ứng nhiễu sóng (Ghi đè hàm cũ)
+    function toggleTheme() {
+        initAudio(); // Đảm bảo âm thanh đã được kích hoạt
+
+        const body = document.body;
+        const loader = document.getElementById('welcome-loader');
+        const themeBtn = document.getElementById('theme-toggle');
+
+        // BẮT ĐẦU: Kích hoạt hiệu ứng nhiễu sóng và phát âm thanh 'click'
+        body.classList.add('active-glitch');
+        playSound('click'); 
+
+        // Tự tổng hợp âm thanh nhiễu điện cực ngắn (Sci-fi zap) cho khớp hiệu ứng
+        if (!isMuted && audioCtx) {
+            let oscZap = audioCtx.createOscillator();
+            let gainZap = audioCtx.createGain();
+            oscZap.connect(gainZap);
+            gainZap.connect(audioCtx.destination);
+            
+            oscZap.type = 'sawtooth'; // Sóng răng cưa cho tiếng zap gay gắt
+            oscZap.frequency.setValueAtTime(200, audioCtx.currentTime); 
+            oscZap.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1); // Tần số vút xuống
+            gainZap.gain.setValueAtTime(0.06, audioCtx.currentTime); // Âm lượng nhỏ nhẹ
+            gainZap.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            
+            oscZap.start();
+            oscZap.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // KẾT THÚC: Đợi 0.5 giây (khớp với thời gian animation) rồi mới chính thức đổi màu nền
+        setTimeout(() => {
+            body.classList.remove('active-glitch'); // Xóa class nhiễu sóng
+            body.classList.toggle('dark-mode'); // Đổi màu nền (Dark mode)
+
+            const isDark = body.classList.contains('dark-mode');
+            document.getElementById('theme-icon').innerText = isDark ? "🌙" : "☀️";
+            
+            // Cập nhật ảnh nền tương ứng (Nếu không có ảnh cụ thể được truyền)
+            if (!body.style.backgroundImage || body.style.backgroundImage.includes('Denia2.jpg') || body.style.backgroundImage.includes('Denia6.jpg')) {
+                body.style.backgroundImage = isDark ? "url('Denia6.jpg')" : "url('Denia2.jpg')";
+            }
+            
+            // Nếu preloader đang ẩn thì không cần làm gì, nếu đang hiện thì đổi màu nền preloader
+            if (loader && !loader.style.visibility) {
+                loader.style.background = isDark ? "#0a0f19" : "#e0f7fa";
+            }
+        }, 500); // 500 mili-giây = 0.5 giây trì hoãn
+    }
+</script>
+
+
+
+
+<style>
+    .star {
+        position: fixed; width: 10px; height: 10px;
+        background: radial-gradient(circle, #fef08a, #eab308);
+        border-radius: 50%; pointer-events: none;
+        z-index: 9999999; box-shadow: 0 0 10px #eab308;
+        animation: star-fade 0.8s ease-out forwards;
+    }
+    @keyframes star-fade {
+        0% { transform: scale(1) translate(0, 0); opacity: 1; }
+        100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
+    }
+</style>
+<script>
+    document.addEventListener('click', function(e) {
+        for (let i = 0; i < 8; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const dx = (Math.random() - 0.5) * 200;
+            const dy = (Math.random() - 0.5) * 200;
+            star.style.left = e.clientX + 'px';
+            star.style.top = e.clientY + 'px';
+            star.style.setProperty('--dx', dx + 'px');
+            star.style.setProperty('--dy', dy + 'px');
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 800);
+        }
+    });
+</script>
+
+
+
+<!-- BẮT ĐẦU: HỆ THỐNG THANH EXP TỔNG HỢP -->
+<div id="hud-exp-container">
+    <div id="hud-level-text">LVL <span id="current-level">1</span></div>
+    <div id="hud-exp-bar-bg">
+        <div id="hud-exp-fill"></div>
+    </div>
+    <div id="hud-exp-text">0 / 100</div>
+    <div id="level-up-alert">LEVEL UP!</div>
+</div>
+
+<style>
+    #hud-exp-container {
+        position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+        width: 50vw; background: rgba(15, 23, 42, 0.9);
+        border: 2px solid #1e293b; padding: 8px 20px; border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); display: flex;
+        align-items: center; gap: 15px; z-index: 10000;
+        border-top: 2px solid rgba(56, 189, 248, 0.3);
+    }
+    #hud-exp-container::before {
+        content: "SYSTEM STATUS"; position: absolute; top: -10px; left: 15px;
+        background: #1e293b; color: #94a3b8; font-size: 8px; padding: 0 6px; border-radius: 4px;
+    }
+    #hud-level-text { color: #38bdf8; font-weight: 700; font-family: monospace; font-size: 16px; }
+    #hud-exp-bar-bg { flex: 1; height: 8px; background: #0f172a; border-radius: 4px; overflow: hidden; border: 1px solid #334155; }
+    #hud-exp-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.4s ease; }
+    #hud-exp-text { color: #e2e8f0; font-family: monospace; font-size: 12px; font-weight: bold; }
+    #level-up-alert {
+        position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+        color: #facc15; font-weight: 900; font-size: 28px; opacity: 0; pointer-events: none; text-shadow: 0 0 20px #eab308;
+    }
+    .show-level-up { animation: levelUpAnim 1.8s ease-out forwards; }
+    @keyframes levelUpAnim {
+        0% { opacity: 0; transform: translate(-50%, 0) scale(0.8); }
+        20% { opacity: 1; transform: translate(-50%, 30px) scale(1.2); }
+        100% { opacity: 0; transform: translate(-50%, 60px) scale(1); }
+    }
+</style>
+
+<script>
+    let currentExp = 0, maxExp = 100, currentLevel = 1;
+    function gainExp() {
+        const gained = Math.floor(Math.random() * 21) + 15;
+        currentExp += gained;
+        if (currentExp >= maxExp) {
+            currentExp -= maxExp; currentLevel++; maxExp = Math.floor(maxExp * 1.2);
+            document.getElementById('current-level').innerText = currentLevel;
+            const alert = document.getElementById('level-up-alert');
+            alert.classList.remove('show-level-up');
+            void alert.offsetWidth; alert.classList.add('show-level-up');
+        }
+        document.getElementById('hud-exp-fill').style.width = (currentExp / maxExp) * 100 + '%';
+        document.getElementById('hud-exp-text').innerText = Math.floor(currentExp) + ' / ' + maxExp;
+    }
+    // Tự động gán sự kiện cho mọi button hiện có
+    document.querySelectorAll('button').forEach(btn => btn.addEventListener('click', gainExp));
+</script>
+<!-- KẾT THÚC: HỆ THỐNG THANH EXP TỔNG HỢP -->
+</body>
+</html>
